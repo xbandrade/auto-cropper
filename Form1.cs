@@ -13,17 +13,7 @@ namespace ImgAutoCropper
             pictureBox1.DragDrop += PictureBoxDragDrop;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object? sender, EventArgs e)
         {
             Image image = pictureBox1.Image;
             if (image != null && (image.Width > 1 || image.Height > 1))
@@ -57,7 +47,7 @@ namespace ImgAutoCropper
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object? sender, EventArgs e)
         {
             string msg = "Crop Border Removal:\n\nRemove unwanted borders and focus on the main content of an image.\n" +
                 "Select an image, and the app will detect and remove any possible borders,\n" +
@@ -65,12 +55,7 @@ namespace ImgAutoCropper
             MessageBox.Show(msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button4_Click(object sender, EventArgs e)
+        private void LoadButton_Click(object? sender, EventArgs e)
         {
             // label2.Text = "Image loaded!";
             // Image selectedImage = Image.FromFile(textBox1.Text);
@@ -79,9 +64,9 @@ namespace ImgAutoCropper
             pictureBox1.Image = selectedImage;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object? sender, EventArgs e)
         {
-            string url = "https://github.com/xbandrade";
+            string url = "https://github.com/xbandrade/auto-cropper";
             try
             {
                 System.Diagnostics.Process.Start(new ProcessStartInfo
@@ -96,23 +81,18 @@ namespace ImgAutoCropper
             }
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void PictureBoxDragEnter(object sender, DragEventArgs e)
+        private void PictureBoxDragEnter(object? sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
             {
                 e.Effect = DragDropEffects.Copy;
             }
         }
 
-        private void PictureBoxDragDrop(object sender, DragEventArgs e)
+        private void PictureBoxDragDrop(object? sender, DragEventArgs e)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (files.Length > 0)
+            if (e.Data?.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
             {
                 string imagePath = files[0];
                 string extension = Path.GetExtension(imagePath);
@@ -132,12 +112,12 @@ namespace ImgAutoCropper
             }
         }
 
-        private bool IsImageFile(string extension)
+        private static bool IsImageFile(string extension)
         {
             string[] supportedExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
             return supportedExtensions.Contains(extension.ToLower());
         }
-        private void button5_Click(object sender, EventArgs e)
+        private void button5_Click(object? sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -152,29 +132,44 @@ namespace ImgAutoCropper
             }
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void label2_Click(object? sender, EventArgs e)
         {
 
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void panel2_Paint(object? sender, PaintEventArgs e)
         {
 
         }
 
-        private void panel2_Paint(object sender, PaintEventArgs e)
+        private void label3_Click(object? sender, EventArgs e)
         {
 
         }
 
-        private void label3_Click(object sender, EventArgs e)
+        private void numericUpDown1_ValueChanged(object? sender, EventArgs e)
         {
 
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void textBox1_TextChanged(object? sender, EventArgs e)
         {
 
         }
+
+        private void pictureBox1_Click(object? sender, EventArgs e)
+        {
+
+        }
+        private void Form1_Load(object? sender, EventArgs e)
+        {
+
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object? sender, MouseEventArgs e)
+        {
+
+        }
+
     }
 }

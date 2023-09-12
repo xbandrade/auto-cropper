@@ -36,7 +36,7 @@
             numericUpDown1 = new NumericUpDown();
             label2 = new Label();
             button5 = new Button();
-            button4 = new Button();
+            LoadButton = new Button();
             panel2 = new Panel();
             pictureBox1 = new PictureBox();
             label1 = new Label();
@@ -73,7 +73,7 @@
             panel1.Controls.Add(numericUpDown1);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(button5);
-            panel1.Controls.Add(button4);
+            panel1.Controls.Add(LoadButton);
             panel1.Controls.Add(panel2);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(button2);
@@ -128,17 +128,17 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
-            // button4
+            // LoadButton
             // 
-            button4.Font = new Font("Roboto Slab Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point);
-            button4.Location = new Point(764, 41);
-            button4.Name = "button4";
-            button4.Size = new Size(106, 30);
-            button4.TabIndex = 6;
-            button4.Text = "Load";
-            button4.TextAlign = ContentAlignment.TopCenter;
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            LoadButton.Font = new Font("Roboto Slab Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point);
+            LoadButton.Location = new Point(764, 41);
+            LoadButton.Name = "LoadButton";
+            LoadButton.Size = new Size(106, 30);
+            LoadButton.TabIndex = 6;
+            LoadButton.Text = "Load";
+            LoadButton.TextAlign = ContentAlignment.TopCenter;
+            LoadButton.UseVisualStyleBackColor = true;
+            LoadButton.Click += LoadButton_Click;
             // 
             // panel2
             // 
@@ -230,7 +230,7 @@
         private Button button2;
         private Button button3;
         private TextBox textBox1;
-        private Button button4;
+        private Button LoadButton;
         private Panel panel2;
         private Label label1;
         private PictureBox pictureBox1;
