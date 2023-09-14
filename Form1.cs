@@ -5,20 +5,21 @@ namespace ImgAutoCropper
 {
     public partial class AutoCropper : Form
     {
+        private Image _imageToSave;
         public AutoCropper()
         {
             InitializeComponent();
-            pictureBox1.AllowDrop = true;
-            pictureBox1.DragEnter += PictureBoxDragEnter;
-            pictureBox1.DragDrop += PictureBoxDragDrop;
+            panel2.AllowDrop = true;
+            panel2.DragEnter += PictureBoxDragEnter;
+            panel2.DragDrop += PictureBoxDragDrop;
+            _imageToSave = new Bitmap(1, 1);
         }
 
         private void button1_Click(object? sender, EventArgs e)
         {
-            Image image = pictureBox1.Image;
-            if (image != null && (image.Width > 1 || image.Height > 1))
+            if (_imageToSave != null && (_imageToSave.Width > 1 || _imageToSave.Height > 1))
             {
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                using (SaveFileDialog saveFileDialog = new())
                 {
                     saveFileDialog.Filter = "PNG Image|*.png|JPEG Image|*.jpg|Bitmap Image|*.bmp";
                     saveFileDialog.Title = "Save Cropped Image";
@@ -35,7 +36,7 @@ namespace ImgAutoCropper
                         {
                             imageFormat = ImageFormat.Bmp;
                         }
-                        image.Save(filePath, imageFormat);
+                        _imageToSave.Save(filePath, imageFormat);
                     }
                 }
                 label2.Text = "Saved!";
@@ -59,9 +60,11 @@ namespace ImgAutoCropper
         {
             // label2.Text = "Image loaded!";
             // Image selectedImage = Image.FromFile(textBox1.Text);
-            Image selectedImage = ImageCropper.CropImage(textBox1.Text, label2, (int)numericUpDown1.Value);
+            DropDownBox.Visible = false;
+            Bitmap image = new(textBox1.Text);
+            (_imageToSave, Image imageToDisplay) = ImageCropper.CropImage(image, label2, (int)numericUpDown1.Value);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.Image = selectedImage;
+            pictureBox1.Image = imageToDisplay;
         }
 
         private void button3_Click(object? sender, EventArgs e)
@@ -81,7 +84,6 @@ namespace ImgAutoCropper
             }
         }
 
-
         private void PictureBoxDragEnter(object? sender, DragEventArgs e)
         {
             if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
@@ -100,12 +102,16 @@ namespace ImgAutoCropper
                 {
                     label2.Text = "Loading";
                     textBox1.Text = imagePath;
-                    Image selectedImage = ImageCropper.CropImage(imagePath, label2, (int)numericUpDown1.Value);
+                    Bitmap image = new(imagePath);
+                    (_imageToSave, Image imageToDisplay) = ImageCropper.CropImage(image, label2, (int)numericUpDown1.Value);
                     pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-                    pictureBox1.Image = selectedImage;
+                    DropDownBox.Visible = false;
+                    pictureBox1.Image = imageToDisplay;
                 }
                 else
                 {
+                    pictureBox1.Image = null;
+                    DropDownBox.Visible = true;
                     label2.Text = "Please drop an image file.";
                     MessageBox.Show("Please drop an image file.", "Error");
                 }
@@ -119,7 +125,7 @@ namespace ImgAutoCropper
         }
         private void button5_Click(object? sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new()
             {
                 Title = "Select File",
                 Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp",
@@ -171,5 +177,9 @@ namespace ImgAutoCropper
 
         }
 
+        private void DropDownBox_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -6,71 +6,82 @@ public static class ImageCropper
 {
     private static int _tolerance;
     private static Color _baseColor;
+    private static Bitmap _baseImage;
+    private static Bitmap _image;
     public static int Tolerance
     {
         get { return _tolerance; }
-        set { _tolerance = value; }
     }
     public static Color BaseColor
     {
         get { return _baseColor; }
-        set { _baseColor = value; }
     }
-    public static Image CropImage(string imagePath, Label label, int tolerance)
+    public static Bitmap Image
     {
-        Bitmap bitmap;
+        get { return _image; }
+    }
+
+    static ImageCropper()
+    {
+        _image = new(1, 1);
+        _baseImage = new(1, 1);
+    }
+
+    public static (Bitmap, Bitmap) CropImage(Bitmap image, Label label, int tolerance)
+    {
         _tolerance = tolerance;
+        _image = image;
+        _baseImage = image;
+        Bitmap transparentCrop;
         try
         {
-            bitmap = new(imagePath);
-            FindBaseColor(bitmap);
+            FindBaseColor();
             if (_baseColor == Color.Empty)
             {
                 label.Text = "No borders found!";
-                return bitmap;
+                return (_image, _image);
             }
-            label.Text = $"New size: {bitmap.Width}x{bitmap.Height}";
-            bitmap = ReduceImageBorders(bitmap,  label);
+            transparentCrop = ReduceImageBorders();
+            label.Text = $"New size: {_image.Width}x{_image.Height}";
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Error loading image: {e.Message}");
             label.Text = $"Error loading image: {e.Message}";
-            return new Bitmap(1, 1);
+            return (new Bitmap(1, 1), new Bitmap(1, 1));
         }
-        return bitmap;
+        return (_image, transparentCrop);
     }
 
-    static void FindBaseColor(Bitmap image)
+    static void FindBaseColor()
     {
-        Color topLeft = image.GetPixel(0, 0);
-        Color bottomRight = image.GetPixel(image.Width - 1, image.Height - 1);
+        Color topLeft = _image.GetPixel(0, 0);
+        Color bottomRight = _image.GetPixel(_image.Width - 1, _image.Height - 1);
 
         _baseColor = topLeft;
-        Color firstRow = GetRowColColorUniform(image, 0, 0, "row");
+        Color firstRow = GetRowColColorUniform(0, 0, "row");
         if (firstRow != Color.Empty)
         {
             return;
         }
-        Color firstCol = GetRowColColorUniform(image, 0, 0, "col");
+        Color firstCol = GetRowColColorUniform(0, 0, "col");
         if (firstCol != Color.Empty)
         {
             return;
         }
         _baseColor = bottomRight;
-        Color lastRow = GetRowColColorUniform(image, image.Height - 1, 0, "row");
+        Color lastRow = GetRowColColorUniform(_image.Height - 1, 0, "row");
         if (lastRow != Color.Empty)
         {
             return;
         }
-        _baseColor = GetRowColColorUniform(image, 0, image.Width - 1, "col");
+        _baseColor = GetRowColColorUniform( 0, _image.Width - 1, "col");
     }
 
-    static Color GetRowColColorUniform(Bitmap image, int row, int col, string direction)
+    static Color GetRowColColorUniform(int row, int col, string direction)
     {
-        for (int i = 0; i < (direction == "row" ? image.Width : image.Height); i++)
+        for (int i = 0; i < (direction == "row" ? _image.Width : _image.Height); i++)
         {
-            Color currentColor = (direction == "row") ? image.GetPixel(i, row) : image.GetPixel(col, i);
+            Color currentColor = (direction == "row") ? _image.GetPixel(i, row) : _image.GetPixel(col, i);
             if (!AreColorsSimilar(currentColor, _baseColor))
             {
                 return Color.Empty;
@@ -87,10 +98,10 @@ public static class ImageCropper
         return deltaR <= _tolerance && deltaG <= _tolerance && deltaB <= _tolerance;
     }
 
-    static Bitmap ReduceImageBorders(Bitmap image, Label label)
+    static Bitmap ReduceImageBorders()
     {
-        int width = image.Width;
-        int height = image.Height;
+        int width = _image.Width;
+        int height = _image.Height;
         int topRowsToRemove = 0;
         int bottomRowsToRemove = 0;
         int leftColsToRemove = 0;
@@ -98,7 +109,7 @@ public static class ImageCropper
 
         for (int r = 0; r < height; r++)
         {
-            if (GetRowColColorUniform(image, r, 0, "row") == _baseColor)
+            if (GetRowColColorUniform(r, 0, "row") == _baseColor)
             {
                 topRowsToRemove++;
             }
@@ -110,7 +121,7 @@ public static class ImageCropper
 
         for (int r = height - 1; r >= 0; r--)
         {
-            if (GetRowColColorUniform(image, r, 0, "row") == _baseColor)
+            if (GetRowColColorUniform(r, 0, "row") == _baseColor)
             {
                 bottomRowsToRemove++;
             }
@@ -122,7 +133,7 @@ public static class ImageCropper
 
         for (int c = 0; c < width; c++)
         {
-            if (GetRowColColorUniform(image, 0, c, "col") == _baseColor)
+            if (GetRowColColorUniform(0, c, "col") == _baseColor)
             {
                 leftColsToRemove++;
             }
@@ -134,7 +145,7 @@ public static class ImageCropper
 
         for (int c = width - 1; c >= 0; c--)
         {
-            if (GetRowColColorUniform(image, 0, c, "col") == _baseColor)
+            if (GetRowColColorUniform(0, c, "col") == _baseColor)
             {
                 rightColsToRemove++;
             }
@@ -147,8 +158,26 @@ public static class ImageCropper
         int newHeight = height - topRowsToRemove - bottomRowsToRemove;
         if (newWidth > 0 && newHeight > 0)
         {
-            image = image.Clone(new Rectangle(leftColsToRemove, topRowsToRemove, newWidth, newHeight), image.PixelFormat);
+            _image = _image.Clone(new Rectangle(leftColsToRemove, topRowsToRemove, newWidth, newHeight), _image.PixelFormat);
         }
-        return image;
+        return AddTransparency(leftColsToRemove, topRowsToRemove, newWidth, newHeight);
+    }
+
+    static Bitmap AddTransparency(int leftColsToRemove, int topRowsToRemove, int newWidth, int newHeight)
+    {
+        if (newWidth > 0 && newHeight > 0)
+        {
+            Bitmap modifiedImage = new(_baseImage);
+            Rectangle interiorRegion = new(leftColsToRemove, topRowsToRemove, newWidth, newHeight);
+            using (Graphics g = Graphics.FromImage(modifiedImage))
+            {
+                using Region region = new(interiorRegion);
+                g.ExcludeClip(region);
+                using SolidBrush transparentBrush = new(Color.FromArgb(128, 255, 255, 255));
+                g.FillRectangle(transparentBrush, 0, 0, modifiedImage.Width, modifiedImage.Height);
+            }
+            return modifiedImage;
+        }
+        return _baseImage;
     }
 }

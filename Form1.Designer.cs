@@ -38,6 +38,7 @@
             button5 = new Button();
             LoadButton = new Button();
             panel2 = new Panel();
+            DropDownBox = new PictureBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
             button2 = new Button();
@@ -46,6 +47,7 @@
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DropDownBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -106,13 +108,13 @@
             // 
             // label2
             // 
-            label2.AutoSize = true;
             label2.BackColor = Color.DarkGray;
             label2.Font = new Font("Roboto Slab ExtraBold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(538, 668);
+            label2.Location = new Point(377, 668);
             label2.Name = "label2";
-            label2.Size = new Size(0, 24);
+            label2.Size = new Size(410, 24);
             label2.TabIndex = 8;
+            label2.Text = "Drag and drop an image to crop!";
             label2.TextAlign = ContentAlignment.MiddleCenter;
             label2.Click += label2_Click;
             // 
@@ -143,8 +145,8 @@
             // panel2
             // 
             panel2.BackColor = Color.DarkGray;
-            panel2.BackgroundImage = global::AutoCropper.Properties.Resources.dropdown;
             panel2.BackgroundImageLayout = ImageLayout.Center;
+            panel2.Controls.Add(DropDownBox);
             panel2.Controls.Add(pictureBox1);
             panel2.Location = new Point(30, 110);
             panel2.Name = "panel2";
@@ -152,9 +154,23 @@
             panel2.TabIndex = 5;
             panel2.Paint += panel2_Paint;
             // 
+            // DropDownBox
+            // 
+            DropDownBox.BackColor = Color.Transparent;
+            DropDownBox.BackgroundImageLayout = ImageLayout.Center;
+            DropDownBox.Image = global::AutoCropper.Properties.Resources.dropdown;
+            DropDownBox.Location = new Point(29, 26);
+            DropDownBox.Name = "DropDownBox";
+            DropDownBox.Size = new Size(1021, 486);
+            DropDownBox.SizeMode = PictureBoxSizeMode.CenterImage;
+            DropDownBox.TabIndex = 1;
+            DropDownBox.TabStop = false;
+            DropDownBox.Click += DropDownBox_Click;
+            // 
             // pictureBox1
             // 
             pictureBox1.BackColor = Color.Transparent;
+            pictureBox1.BackgroundImageLayout = ImageLayout.Center;
             pictureBox1.Location = new Point(29, 26);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(1021, 486);
@@ -218,6 +234,7 @@
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DropDownBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
@@ -238,5 +255,6 @@
         private Label label2;
         private NumericUpDown numericUpDown1;
         private Label label3;
+        private PictureBox DropDownBox;
     }
 }
