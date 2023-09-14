@@ -79,7 +79,7 @@ public static class ImageCropper
 
     static Color GetRowColColorUniform(int row, int col, string direction)
     {
-        for (int i = 0; i < (direction == "row" ? _image.Width : _image.Height); i++)
+        for (int i = 0; i < (direction == "row" ? _image.Width : _image.Height); ++i)
         {
             Color currentColor = (direction == "row") ? _image.GetPixel(i, row) : _image.GetPixel(col, i);
             if (!AreColorsSimilar(currentColor, _baseColor))
@@ -107,11 +107,11 @@ public static class ImageCropper
         int leftColsToRemove = 0;
         int rightColsToRemove = 0;
 
-        for (int r = 0; r < height; r++)
+        for (int r = 0; r < height; ++r)
         {
             if (GetRowColColorUniform(r, 0, "row") == _baseColor)
             {
-                topRowsToRemove++;
+                ++topRowsToRemove;
             }
             else
             {
@@ -119,11 +119,11 @@ public static class ImageCropper
             }
         }
 
-        for (int r = height - 1; r >= 0; r--)
+        for (int r = height - 1; r >= 0; --r)
         {
             if (GetRowColColorUniform(r, 0, "row") == _baseColor)
             {
-                bottomRowsToRemove++;
+                ++bottomRowsToRemove;
             }
             else
             {
@@ -131,11 +131,11 @@ public static class ImageCropper
             }
         }
 
-        for (int c = 0; c < width; c++)
+        for (int c = 0; c < width; ++c)
         {
             if (GetRowColColorUniform(0, c, "col") == _baseColor)
             {
-                leftColsToRemove++;
+                ++leftColsToRemove;
             }
             else
             {
@@ -143,11 +143,11 @@ public static class ImageCropper
             }
         }
 
-        for (int c = width - 1; c >= 0; c--)
+        for (int c = width - 1; c >= 0; --c)
         {
             if (GetRowColColorUniform(0, c, "col") == _baseColor)
             {
-                rightColsToRemove++;
+                ++rightColsToRemove;
             }
             else
             {
